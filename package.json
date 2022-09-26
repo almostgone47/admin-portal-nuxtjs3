@@ -11,8 +11,10 @@
     "nuxt": "3.0.0-rc.11"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "@nuxtjs/tailwindcss": "^5.3.3",
     "@pinia/nuxt": "^0.4.2",
+    "ant-design-vue": "^3.2.12",
     "pinia": "^2.0.22",
     "vue": "^3.2.39"
   }
