@@ -9,15 +9,13 @@ import passportConfig from "../../config/passport";
 const prisma = new PrismaClient();
 const app = express();
 
-// Passport middleware
+// Passport is Express auth middleware
 app.use(passport.initialize());
-
-// Passport config
 passportConfig(passport);
 
 app.use(express.json());
 
-app.get(`/test`, (req, res) => {
+app.get(`/api/test`, (req, res) => {
   res.send("the api works!!");
 });
 
@@ -33,18 +31,22 @@ app.post(`/api/register`, async (req, res) => {
   }
   // else create new user with hashed password
   const newUser = {
+    username: req.body.username,
     email: req.body.email.trim().toLowerCase(),
     password: req.body.password, // This will be a hash
   };
-  // Generate hash for password
+  // Generate hash for password to secure saved password
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(newUser.password, salt, async (err, hash) => {
       if (err) throw err;
       newUser.password = hash;
       // create new user
       const payload = await prisma.user.create({
-        data: { email: newUser.email, password: newUser.password },
+        data: { ...newUser },
       });
+      // remove password from payload and set authenticated
+      delete payload.password;
+      payload.isAuthenticated = true;
 
       // return signed jwt tokent to client side
       jwt.sign(
@@ -104,7 +106,7 @@ app.get(
   "/api/current-user",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    res.json("some shit");
+    res.json({ user: req.user });
   }
 );
 

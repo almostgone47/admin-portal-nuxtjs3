@@ -1,28 +1,3 @@
-<script>
-export default {
-  auth: false,
-  data() {
-    return {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    };
-  },
-  methods: {
-    async register() {
-      const { data: count } = await useFetch("/api/register", {
-        method: "POST",
-        body: { email: this.email, password: this.password },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("login: ", count.value);
-    },
-  },
-};
-</script>
-
 <template>
   <section class="h-screen">
     <div class="px-6 h-full text-gray-800">
@@ -39,16 +14,24 @@ export default {
           />
         </div>
         <div class="xl:ml-20 xl:w-5/12 lg:w-5/12 md:w-8/12 mb-12 md:mb-0">
-          <form @submit.prevent="register">
+          <form @submit.prevent="store.register">
             <h1 class="text-5xl font-bold leading-normal mt-0">Sign Up</h1>
+            <!-- Username input -->
+            <div class="mb-6">
+              <input
+                type="text"
+                class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                placeholder="Username"
+                v-model="store.username"
+              />
+            </div>
             <!-- Email input -->
             <div class="mb-6">
               <input
                 type="text"
                 class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                id="exampleFormControlInput2"
                 placeholder="Email address"
-                v-model="email"
+                v-model="store.email"
               />
             </div>
 
@@ -56,20 +39,21 @@ export default {
             <div class="mb-6">
               <input
                 type="password"
+                :class="{ error: !isMatch }"
                 class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                id="exampleFormControlInput2"
                 placeholder="Password"
-                v-model="password"
+                v-model="store.password"
               />
             </div>
 
             <div class="mb-6">
               <input
                 type="password"
+                :class="{ error: !isMatch }"
                 class="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                 id="exampleFormControlInput2"
                 placeholder="Confirm Password"
-                v-model="confirmPassword"
+                v-model="store.confirmPassword"
               />
             </div>
 
@@ -83,7 +67,7 @@ export default {
               <p class="text-sm font-semibold mt-2 pt-1 mb-0">
                 Already have an account?
                 <NuxtLink
-                  to="/login"
+                  to="/"
                   class="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out"
                   >Login</NuxtLink
                 >
@@ -95,3 +79,30 @@ export default {
     </div>
   </section>
 </template>
+<script>
+export default {
+  setup() {
+    const store = useAuthStore();
+    return { store };
+  },
+
+  computed: {
+    isDisabled() {
+      if (
+        store.email != "" &&
+        store.password != "" &&
+        store.confirmPassword != ""
+      ) {
+        return false;
+      }
+      return true;
+    },
+    isMatch() {
+      if (store.password === store.confirmPassword) {
+        return true;
+      }
+      return false;
+    },
+  },
+};
+</script>

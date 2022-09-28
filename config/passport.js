@@ -18,8 +18,11 @@ const passportStrategy = (passport) => {
             email: jwt_payload.email,
           },
         });
+        // make sure user password can't be retrieved
+        delete user.password;
 
         if (user) {
+          user.isAuthenticated = true;
           return done(null, user);
         } else {
           return done(null, false);

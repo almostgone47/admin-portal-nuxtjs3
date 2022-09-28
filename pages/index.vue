@@ -1,15 +1,3 @@
-<script>
-// import { useAuthStore } from "@/composables/useAuthStore.ts";
-
-export default {
-  auth: false,
-  setup() {
-    const store = useAuthStore();
-    return { store };
-  },
-};
-</script>
-
 <template>
   <section class="h-screen">
     <div class="px-6 h-full text-gray-800">
@@ -88,3 +76,11 @@ export default {
     </div>
   </section>
 </template>
+<script>
+export default {
+  setup() {
+    const store = useAuthStore();
+    return { store };
+  },
+};
+</script>

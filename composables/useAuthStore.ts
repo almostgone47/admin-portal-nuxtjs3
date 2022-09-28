@@ -1,37 +1,58 @@
-interface Idata {
-  success: String;
-  jwtToken: String;
-}
-
-export const useAuthStore: Object = defineStore("auth", {
-  state: () => ({ email: "a", password: "a", token: "" }),
+const useAuthStore: Object = defineStore("auth", {
+  state: () => ({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    username: "",
+    token: "",
+    isAuthenticated: false,
+  }),
 
   actions: {
+    async register() {
+      const res: any = await useFetch("/api/register", {
+        method: "POST",
+        body: {
+          email: this.email,
+          password: this.password,
+          username: this.username,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const { success, jwtToken } = res.data.value;
+
+      if (success) {
+        localStorage.setItem("token", jwtToken);
+        await useRouter().push("/dashboard");
+      }
+    },
     async login() {
-      const res = await useFetch("/api/login", {
+      const res: any = await useFetch("/api/login", {
         method: "POST",
         body: { email: this.email, password: this.password },
       });
-      console.log("login: ", res);
 
-      //   if (res.data.success) {
-      //     localStorage.setItem("token", res.data.jwtToken);
-      //     await useRouter().push("/");
-      //   }
+      const { success, jwtToken } = res.data.value;
+
+      if (success) {
+        localStorage.setItem("token", jwtToken);
+        await useRouter().push("/dashboard");
+      }
     },
     logout() {
       localStorage.removeItem("token");
-      useRouter().push("/login");
+      window.location.href = "/";
     },
     async currentUser() {
       const token = localStorage.getItem("token");
-      const { data } = useFetch("/api/current-user", {
-        headers: { "Content-Type": "application/json", Authorization: token },
-      });
-      console.log("middleware: ", data);
-      if (!data) {
-        await useRouter().push("/login");
+
+      if (!token) {
+        await useRouter().push("/");
       }
     },
   },
 });
+
+export default useAuthStore;
