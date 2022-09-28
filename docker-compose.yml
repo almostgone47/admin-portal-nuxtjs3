@@ -16,19 +16,11 @@ services:
       - 3306:3306
     environment:
       MYSQL_DATABASE: "admin-portal"
-      MYSQL_USER: "root"
       MYSQL_ALLOW_EMPTY_PASSWORD: true,
       MYSQL_PASSWORD: ""
       MYSQL_ROOT_PASSWORD: ""
     volumes:
       - admin-portal:/var/lib/mysql
-
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - 80:80
 
 volumes:
   admin-portal:
