@@ -1,3 +1,8 @@
+interface APIBody {
+  success: string;
+  jwtToken: string;
+}
+
 const useAuthStore: Object = defineStore("auth", {
   state: () => ({
     email: "",
@@ -10,7 +15,7 @@ const useAuthStore: Object = defineStore("auth", {
 
   actions: {
     async register() {
-      const res: any = await useFetch("/api/register", {
+      const res = await useFetch<APIBody>("/api/register", {
         method: "POST",
         body: {
           email: this.email,
@@ -29,7 +34,7 @@ const useAuthStore: Object = defineStore("auth", {
       }
     },
     async login() {
-      const res: any = await useFetch("/api/login", {
+      const res = await useFetch<APIBody>("/api/login", {
         method: "POST",
         body: { email: this.email, password: this.password },
       });

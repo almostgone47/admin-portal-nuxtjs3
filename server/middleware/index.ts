@@ -41,7 +41,7 @@ app.post(`/api/register`, async (req, res) => {
       if (err) throw err;
       newUser.password = hash;
       // create new user
-      const payload = await prisma.user.create({
+      const payload: any = await prisma.user.create({
         data: { ...newUser },
       });
       // remove password from payload and set authenticated
@@ -105,7 +105,7 @@ app.post(`/api/login`, async (req, res) => {
 app.get(
   "/api/current-user",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+  (req: any, res) => {
     res.json({ user: req.user });
   }
 );
